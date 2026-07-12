@@ -1,0 +1,11 @@
+---
+import DocPage from '../../components/DocPage.astro'; import Callout from '../../components/Callout.astro';
+---
+<DocPage eyebrow="DOCS / REFERENCE" title="Docs" lead="Guideが『どう導入するか』を扱うのに対し、Docsはソースに登場するクラス、変数、関数、責務を名前から引けるリファレンスです。" description="Guaのクラス、変数、サンプルコードの日本語リファレンス。" section="docs">
+  <Callout title="参照している公式ソース"><p>内容はGuaの<code>main</code>にある実装を基準にしている。各ページからGitHub上の原文へ移動できる。</p></Callout>
+  <div class="card-grid">
+    <a class="chapter-card" href="/docs/godot-main-gd/"><span>SAMPLE / GODOT</span><h3>Godot main.gd</h3><p>トップレベル変数、Godotライフサイクル、UI構築、ブリッジ開始処理。</p></a>
+    <a class="chapter-card" href="/docs/dotnet-packages/"><span>PACKAGES / .NET</span><h3>.NETパッケージ</h3><p>Gua.Core、Gua.Testing、Gua.Testing.Godotの責務と主要クラス。</p></a>
+  </div>
+  <h2>読み分け</h2><div class="grid-2"><div class="mini-card"><strong>Guide</strong><p>導入、ビルド、接続、テストを順番に進めたいときに読む。</p></div><div class="mini-card"><strong>Docs</strong><p>コード中の型や変数の目的、責務、相互関係を調べたいときに読む。</p></div></div>
+</DocPage>

@@ -1,34 +1,52 @@
 ---
-import { sections } from '../data/nav';
+import { sections, docs, sectionsEn, docsEn } from '../data/nav';
 import '../styles/global.css';
 
 interface Props { title: string; description: string; section?: string; }
 const { title, description, section } = Astro.props;
 const path = Astro.url.pathname;
+const isEnglish = path === '/en/' || path.startsWith('/en/');
+const activeSections = isEnglish ? sectionsEn : sections;
+const activeDocs = isEnglish ? docsEn : docs;
+const englishPath = isEnglish ? path : `/en${path}`;
+const japanesePath = isEnglish ? (path.replace(/^\/en/, '') || '/') : path;
+const siteBase = Astro.site ?? new URL('/', Astro.url.origin);
+const preferredUrl = new URL(englishPath.replace(/^\//, ''), siteBase);
+const japaneseUrl = new URL(japanesePath === '/' ? '' : japanesePath.replace(/^\//, ''), siteBase);
 ---
 <!doctype html>
-<html lang="ja">
+<html lang={isEnglish ? 'en' : 'ja'}>
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width" />
     <meta name="description" content={description} />
     <meta name="theme-color" content="#0d1117" />
-    <title>{title} | Gua 日本語ガイド</title>
+    <link rel="canonical" href={preferredUrl} />
+    <link rel="alternate" hreflang="en" href={preferredUrl} />
+    <link rel="alternate" hreflang="ja" href={japaneseUrl} />
+    <link rel="alternate" hreflang="x-default" href={preferredUrl} />
+    <title>{title} | {isEnglish ? 'Gua Reference' : 'Gua 日本語リファレンス'}</title>
   </head>
   <body>
     <header class="topbar">
-      <a class="brand" href="/" aria-label="Gua 日本語ガイド ホーム">
-        <span class="brand-mark">G</span><span>Gua <b>日本語ガイド</b></span>
+      <button class="menu-toggle" type="button" aria-label={isEnglish ? 'Open navigation menu' : 'ナビゲーションメニューを開く'} aria-controls="site-sidebar" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+      <a class="brand" href={isEnglish ? '/en/' : '/'} aria-label={isEnglish ? 'Gua Reference home' : 'Gua 日本語リファレンス ホーム'}>
+        <span class="brand-mark">G</span><span>Gua <b>{isEnglish ? 'REFERENCE' : '日本語リファレンス'}</b></span>
       </a>
-      <nav class="topnav" aria-label="主要ナビゲーション">
-        <a href="/godot/">Godot</a><a href="/imgui/">ImGui</a><a href="/inspector/">Inspector</a><a href="/mcp/">MCP</a>
+      <nav class="topnav" aria-label={isEnglish ? 'Primary navigation' : '主要ナビゲーション'}>
+        <a href={isEnglish ? '/en/godot/' : '/godot/'}>Guide</a><a href={isEnglish ? '/en/docs/' : '/docs/'}>Docs</a><a href={isEnglish ? '/en/inspector/' : '/inspector/'}>Inspector</a><a href={isEnglish ? '/en/mcp/' : '/mcp/'}>MCP</a>
       </nav>
+      <a class="lang-link" href={isEnglish ? japanesePath : englishPath}>{isEnglish ? '日本語' : 'English'}</a>
       <a class="github-link" href="https://github.com/link1345/gua" target="_blank" rel="noreferrer">GitHub ↗</a>
     </header>
     <div class="shell">
-      <aside class="sidebar">
-        <a class:list={["side-home", path === '/' && 'active']} href="/">はじめに</a>
-        {sections.map((item) => (
+      <button class="menu-backdrop" type="button" aria-label={isEnglish ? 'Close navigation menu' : 'ナビゲーションメニューを閉じる'} tabindex="-1"></button>
+      <aside class="sidebar" id="site-sidebar">
+        <a class:list={["side-home", path === (isEnglish ? '/en/' : '/') && 'active']} href={isEnglish ? '/en/' : '/'}>{isEnglish ? 'Introduction' : 'はじめに'}</a>
+        <div class="side-label">GUIDE</div>
+        {activeSections.map((item) => (
           <div class="side-group">
             <a class:list={["side-parent", path.startsWith(item.href) && 'active']} href={item.href}>
               <i class={`dot ${item.accent}`}></i>{item.label}
@@ -38,10 +56,41 @@ const path = Astro.url.pathname;
             </div>}
           </div>
         ))}
-        <div class="version-note"><span>対象</span><strong>Gua / main</strong><small>Godot 4.7 · Windows</small></div>
+        <div class="side-label docs-label">DOCS / REFERENCE</div>
+        <div class="side-children docs-nav">
+          {activeDocs.map((item) => <a class:list={[path === item.href && 'active']} href={item.href}>{item.label}</a>)}
+        </div>
+        <div class="version-note"><span>{isEnglish ? 'TARGET' : '対象'}</span><strong>Gua / main</strong><small>Godot 4.7 · Windows</small></div>
       </aside>
-      <main class:list={["content", section && `section-${section}`]}><slot /></main>
+      <main class:list={["content", section && `section-${section}`]}>
+        {!isEnglish && <div class="translation-note">英語版が正式な参照です。内容に差異がある場合は、<a href={englishPath}>英語版</a>を優先してください。</div>}
+        <slot />
+      </main>
     </div>
-    <footer><span>Gua 日本語ガイド</span><span>非公式・コミュニティドキュメント</span><a href="https://github.com/link1345/gua/blob/main/LICENSE">MIT License</a></footer>
+    <footer><span>{isEnglish ? 'Gua Reference' : 'Gua 日本語リファレンス'}</span><span>{isEnglish ? 'Official documentation' : '公式ドキュメント'}</span><a href="https://github.com/link1345/gua/blob/main/LICENSE">MIT License</a></footer>
+    <script>
+      const toggle = document.querySelector<HTMLButtonElement>('.menu-toggle');
+      const sidebar = document.querySelector<HTMLElement>('#site-sidebar');
+      const backdrop = document.querySelector<HTMLButtonElement>('.menu-backdrop');
+
+      const setMenuOpen = (open: boolean) => {
+        sidebar?.classList.toggle('mobile-open', open);
+        backdrop?.classList.toggle('visible', open);
+        toggle?.classList.toggle('active', open);
+        toggle?.setAttribute('aria-expanded', String(open));
+        document.body.classList.toggle('menu-open', open);
+      };
+
+      toggle?.addEventListener('click', () => {
+        setMenuOpen(toggle.getAttribute('aria-expanded') !== 'true');
+      });
+      backdrop?.addEventListener('click', () => setMenuOpen(false));
+      sidebar?.querySelectorAll('a').forEach((link) => {
+        link.addEventListener('click', () => setMenuOpen(false));
+      });
+      document.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape') setMenuOpen(false);
+      });
+    </script>
   </body>
 </html>

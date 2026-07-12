@@ -1,0 +1,23 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+---
+<BaseLayout title="Drive game UI by meaning" description="The official Gua reference for Godot integration, testing, Inspector, and MCP automation.">
+  <section class="hero-home"><div class="inner">
+    <span class="kicker">RUNTIME UI AUTOMATION FOR GAMES</span>
+    <h1>Drive game UI by <em>meaning</em>.</h1>
+    <p>Gua exposes a running game's UI as a semantic tree. Tests and AI agents can find and activate a “Start Game” button by identity and role—without brittle coordinates or image recognition.</p>
+    <div class="hero-actions"><a class="button" href="/en/godot/">Read the guide →</a><a class="button secondary" href="/en/docs/">Browse the API docs</a></div>
+  </div></section>
+  <section class="home-content">
+    <span class="kicker">GET THE LATEST</span><h2>Start with the latest release</h2>
+    <p>Download the Godot add-on and Windows Inspector from <a href="https://github.com/link1345/gua/releases/latest" style="color:var(--mint);text-decoration:underline">GitHub Releases / Latest</a>. Building Gua from source is intended for contributors working on Gua itself.</p>
+    <span class="kicker">HOW IT WORKS</span><h2>Observe the real input path</h2>
+    <div class="pipeline"><div><strong>01 / DRAW</strong>Godot renders its UI normally</div><div><strong>02 / REFLECT</strong>The adapter collects semantic state</div><div><strong>03 / CONNECT</strong>The bridge publishes it over WebSocket</div><div><strong>04 / ACT</strong>Tests, Inspector, and MCP operate it</div></div>
+    <div class="card-grid">
+      <a class="chapter-card" href="/en/godot/"><span>ENGINE / 01</span><h3>Godot guide</h3><p>Attach the GDScript adapter, collect the Control tree, and exercise live scenes from external tests.</p></a>
+      <a class="chapter-card" href="/en/inspector/"><span>TOOL / 02</span><h3>Inspector</h3><p>Inspect the UI tree, node state, logs, and screenshots while diagnosing a live connection.</p></a>
+      <a class="chapter-card" href="/en/mcp/"><span>TOOL / 03</span><h3>MCP server</h3><p>Give an AI agent a semantic, inspectable way to explore and operate game UI.</p></a>
+      <a class="chapter-card" href="/en/docs/"><span>REFERENCE / 04</span><h3>API docs</h3><p>Look up the sample's variables and functions, plus the responsibilities of each .NET package.</p></a>
+    </div>
+  </section>
+</BaseLayout>

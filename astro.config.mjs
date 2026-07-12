@@ -1,6 +1,6 @@
 import { defineConfig } from 'astro/config';
 
 export default defineConfig({
-  site: 'https://link1345.github.io/gua-docs/',
+  site: 'https://gua.orizika.com/',
   output: 'static',
 });

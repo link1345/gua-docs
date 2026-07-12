@@ -1,0 +1,21 @@
+---
+import DocPage from '../../../components/DocPage.astro'; import CodeBlock from '../../../components/CodeBlock.astro'; import Callout from '../../../components/Callout.astro';
+const config = `{
+  "mcpServers": {
+    "gua": {
+      "command": "bunx",
+      "args": ["gui-mcp@latest", "mcp"],
+      "env": {
+        "GUA_BRIDGE_URL": "ws://127.0.0.1:8765"
+      }
+    }
+  }
+}`;
+---
+<DocPage eyebrow="TOOL / MCP SERVER" title="MCP Server" lead="gui-mcp is a thin stdio server that forwards an AI agent's tool calls to the WebSocket bridge running inside the game." description="Configure gui-mcp and operate a Gua game runtime." section="mcp">
+  <h2>Start the game first</h2><div class="flow"><span>AI client</span><b>stdio →</b><span>gui-mcp</span><b>WebSocket →</b><span>Game bridge</span><b>→</b><span>Gua adapter</span></div><p>The MCP server does not own UI state. The Godot application must start a bridge listening at <code>ws://127.0.0.1:8765</code>.</p>
+  <h2>Register it with an MCP client</h2><p>In a Bun environment, launch the published package with <code>bunx</code>. Adapt the following command and arguments to your client's configuration format.</p><CodeBlock title="Example MCP configuration" lang="json" code={config} /><Callout title="Use another port"><p>Set <code>GUA_BRIDGE_URL</code> to connect to a test that reserved a different port or to another runtime adapter.</p></Callout>
+  <h2>Available tools</h2><div class="grid-2"><div class="mini-card"><strong>get_ui_tree</strong><p>Read the current screen and semantic UI tree. This is the normal first call.</p></div><div class="mini-card"><strong>click_node</strong><p>Send a click request to a stable node ID.</p></div><div class="mini-card"><strong>wait_for_node</strong><p>Wait for a node to appear or change state.</p></div><div class="mini-card"><strong>press_key</strong><p>Send a key request, including to the currently focused element.</p></div><div class="mini-card"><strong>get_screenshot</strong><p>Read the latest screenshot published by the runtime.</p></div><div class="mini-card"><strong>get_logs / run_test</strong><p>Inspect runtime logs or invoke a runtime-side test operation.</p></div></div>
+  <h2>Prompting an agent</h2><CodeBlock title="Example prompt" lang="text" code={`Read the Gua UI tree and find the “Start Game” button.\nClick it by stable ID, then wait until “Loading...” is visible.\nIf the operation fails, inspect the logs and report both\nthe relevant UI tree state and the likely cause.`} />
+  <Callout kind="warn" title="Do not ask for coordinate clicks"><p>Gua's value is semantic operation. Ask the agent to inspect <code>get_ui_tree</code> first, then act using ID, role, or text as evidence.</p></Callout>
+</DocPage>

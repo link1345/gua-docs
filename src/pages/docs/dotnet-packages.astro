@@ -1,0 +1,30 @@
+---
+import DocPage from '../../components/DocPage.astro'; import CodeBlock from '../../components/CodeBlock.astro'; import Callout from '../../components/Callout.astro';
+---
+<DocPage eyebrow="DOCS / .NET PACKAGES" title=".NETパッケージ" lead="Godotの外部UIテストは3層で構成される。Coreだけ、TestingだけではGodotプロセスを起動した統合テストにならない。" description="Gua.Core、Gua.Testing、Gua.Testing.Godotのクラスリファレンス。" section="docs">
+  <h2>インストール</h2><CodeBlock title="テストプロジェクトで実行" lang="powershell" code={`dotnet add package Gua.Core --version 0.12.0\ndotnet add package Gua.Testing --version 0.12.0\ndotnet add package Gua.Testing.Godot --version 0.12.0`} /><p>バージョン固定を外せばNuGet上の最新安定版が選ばれる。3パッケージは同じバージョン系列へ揃える。</p>
+  <h2>Gua.Core</h2><p>ネイティブC ABIを.NETから扱う最低層。UI Treeと要求・イベントの契約を提供する。</p><div class="table-wrap"><table><thead><tr><th>型</th><th>役割</th></tr></thead><tbody>
+    <tr><td><code>IGuaContext</code></td><td>ローカル/リモートContextに共通する操作境界。</td></tr>
+    <tr><td><code>GuaContext</code></td><td>ネイティブGua Contextを所有し、node、snapshot、request、eventを操作。</td></tr>
+    <tr><td><code>GuaSelector</code></td><td>id、role、text、状態、scopeを表す選択条件。</td></tr>
+    <tr><td><code>GuaNodeState</code></td><td>visible、enabled、value、focused、checked等の観測状態。</td></tr>
+    <tr><td><code>GuaAction</code> / <code>GuaEvent</code></td><td>外部要求とホストが観測した結果・イベント。</td></tr>
+    <tr><td><code>GuaReset</code></td><td>session epochと要求・イベント・履歴の初期化契約。</td></tr>
+  </tbody></table></div>
+  <h2>Gua.Testing</h2><p>Coreの上へ、テストで読むための高水準APIを追加する。</p><div class="table-wrap"><table><thead><tr><th>型</th><th>役割</th></tr></thead><tbody>
+    <tr><td><code>GuaAssertions</code></td><td><code>GetById</code>、<code>GetByRole</code>、<code>WaitFor...</code>等の入口。</td></tr>
+    <tr><td><code>GuaLocatorQuery</code></td><td>ByRole、ByText、Within、WhereVisible等を連結するselector builder。</td></tr>
+    <tr><td><code>GuaNodeSnapshot</code></td><td>成功した特定frame/revision時点のノード証拠。</td></tr>
+    <tr><td><code>GuaTestSession</code></td><td>テスト前後のresetとstrict leak検出を管理。</td></tr>
+    <tr><td><code>GuaAssertionScope</code></td><td>NUnit等の失敗処理と診断オプションをスコープへ適用。</td></tr>
+    <tr><td><code>GuaDiagnostics</code></td><td>失敗時のUI Tree、ログ、履歴、環境情報を成果物として保存。</td></tr>
+  </tbody></table></div>
+  <h2>Gua.Testing.Godot</h2><p>Godotプロセスを起動し、ゲーム内WebSocketブリッジへ接続するホスト層。</p><div class="table-wrap"><table><thead><tr><th>型</th><th>役割</th></tr></thead><tbody>
+    <tr><td><code>GodotSceneTestHost</code></td><td>シーンの起動、接続、終了、stdout/stderr、スクリーンショットを管理。</td></tr>
+    <tr><td><code>GodotSceneTestHostOptions</code></td><td>Godot実行ファイル、project path、headless、port、環境変数、reset policyを指定。</td></tr>
+    <tr><td><code>GuaRemoteContext</code></td><td>WebSocket越しに最新snapshotを取得し、actionを送る<code>IGuaContext</code>実装。</td></tr>
+    <tr><td><code>GuaRemoteUiTree</code></td><td>リモートJSON snapshotを.NETのノード表現へ変換。</td></tr>
+    <tr><td><code>GuaScreenshot</code></td><td>公開済みPNGの保存結果、絶対パス、寸法等を表す。</td></tr>
+  </tbody></table></div>
+  <Callout kind="tip" title="依存の向き"><p><code>Gua.Testing.Godot → Gua.Testing → Gua.Core → ネイティブGua</code>の順です。テストコードは主にGodot hostとAssertionsを使いますが、下層パッケージも明示してバージョンを揃えます。</p></Callout>
+</DocPage>

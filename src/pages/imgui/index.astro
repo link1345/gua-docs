@@ -1,7 +1,0 @@
----
-import DocPage from '../../components/DocPage.astro';
----
-<DocPage eyebrow="IMGUI / OVERVIEW" title="ImGui編" lead="Dear ImGuiの描画呼び出しを薄いGuaImGuiファサードへ置き換え、同じフレームで表示と意味情報を生成する。" description="GuaをDear ImGuiへ導入する日本語ガイド。" section="imgui">
-  <div class="grid-2"><a class="mini-card" href="/imgui/ui/"><strong>01　UI実装の仕方 →</strong><p>ボタン、テキスト、入力、チェック、選択を意味付きで描く。</p></a><a class="mini-card" href="/imgui/testing/"><strong>02　テストの仕方 →</strong><p>ヘッドレスsmokeとC++ロケーターでUIの振る舞いを検証する。</p></a></div>
-  <h2>GuaImGuiが担うこと</h2><div class="flow"><span>ImGui::NewFrame</span><b>→</b><span>GuaImGui::Button</span><b>→</b><span>context.end_frame</span><b>→</b><span>Semantic snapshot</span></div><p>GuaはDear ImGuiの代替ではない。描画はDear ImGuiへ委譲し、その直後に矩形、表示状態、フォーカス、値などを同じウィジェットから観測する。</p>
-</DocPage>

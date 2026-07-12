@@ -12,10 +12,10 @@ const config = `{
   }
 }`;
 ---
-<DocPage eyebrow="TOOL / MCP SERVER" title="MCPサーバー操作編" lead="gui-mcpは、AIエージェントのツール呼び出しを実行中ゲームのWebSocketブリッジへ中継する薄いstdioサーバーだ。" description="gui-mcpの設定とGuaゲームランタイム操作方法。" section="mcp">
-  <h2>先にゲームを起動する</h2><div class="flow"><span>AI client</span><b>stdio →</b><span>gui-mcp</span><b>WebSocket →</b><span>Game bridge</span><b>→</b><span>Gua adapter</span></div><p>MCPサーバー自身はUI状態を持たない。GodotまたはImGuiアプリがブリッジを起動し、<code>ws://127.0.0.1:8765</code>で待ち受けている必要がある。</p>
+<DocPage eyebrow="TOOL / MCP SERVER" title="MCPサーバー操作編" lead="gui-mcpは、AIエージェントのツール呼び出しを実行中ゲームのWebSocketブリッジへ中継する薄いstdioサーバーです。" description="gui-mcpの設定とGuaゲームランタイム操作方法。" section="mcp">
+  <h2>先にゲームを起動する</h2><div class="flow"><span>AI client</span><b>stdio →</b><span>gui-mcp</span><b>WebSocket →</b><span>Game bridge</span><b>→</b><span>Gua adapter</span></div><p>MCPサーバー自身はUI状態を持ちません。Godotアプリがブリッジを起動し、<code>ws://127.0.0.1:8765</code>で待ち受けている必要があります。</p>
   <h2>MCPクライアントへ登録</h2><p>Bun環境では公開パッケージを<code>bunx</code>で起動する。クライアントの設定形式に合わせ、次のコマンドと引数を登録する。</p><CodeBlock title="MCP設定例" lang="json" code={config} /><Callout title="別ポートへ接続"><p><code>GUA_BRIDGE_URL</code>を変更すれば、空きポートを使うテストや別のランタイムへ接続できる。</p></Callout>
   <h2>使えるツール</h2><div class="grid-2"><div class="mini-card"><strong>get_ui_tree</strong><p>現在の画面とSemantic UI Treeを取得する。操作前の第一手。</p></div><div class="mini-card"><strong>click_node</strong><p>安定IDを指定してクリック要求を送る。</p></div><div class="mini-card"><strong>wait_for_node</strong><p>ノードの出現や状態変化を待つ。</p></div><div class="mini-card"><strong>press_key</strong><p>現在フォーカス中の要素などへキー入力要求を送る。</p></div><div class="mini-card"><strong>get_screenshot</strong><p>ランタイムが公開したスクリーンショットを取得する。</p></div><div class="mini-card"><strong>get_logs / run_test</strong><p>ログ確認と、ランタイム側テスト操作を実行する。</p></div></div>
   <h2>AIへの頼み方</h2><CodeBlock title="プロンプト例" lang="text" code={`GuaのUIツリーを取得し、「Start Game」ボタンを探してください。\n見つかった安定IDを使ってクリックし、\n「Loading...」が表示されるまで待ってください。\n失敗した場合はログを確認し、UIツリーと原因を報告してください。`} />
-  <Callout kind="warn" title="座標クリックを指示しない"><p>Guaの強みは意味による操作だ。まず<code>get_ui_tree</code>で対象を確認し、id・role・textを根拠に操作させる。</p></Callout>
+  <Callout kind="warn" title="座標クリックを指示しない"><p>Guaの強みは意味による操作です。まず<code>get_ui_tree</code>で対象を確認し、id・role・textを根拠に操作させます。</p></Callout>
 </DocPage>

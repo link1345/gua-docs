@@ -1,0 +1,11 @@
+---
+import DocPage from '../../../components/DocPage.astro'; import Callout from '../../../components/Callout.astro';
+---
+<DocPage eyebrow="DOCS / REFERENCE" title="Docs" lead="The guide explains how to complete a workflow. These API docs explain the classes, variables, functions, and ownership boundaries you encounter in source." description="Official Gua API and sample reference." section="docs">
+  <Callout title="Source of truth"><p>These pages are derived from the implementation on Gua's <code>main</code> branch. Each reference links to its corresponding source on GitHub.</p></Callout>
+  <div class="card-grid">
+    <a class="chapter-card" href="/en/docs/godot-main-gd/"><span>SAMPLE / GODOT</span><h3>Godot main.gd</h3><p>Top-level variables, Godot lifecycle hooks, UI construction, and bridge startup.</p></a>
+    <a class="chapter-card" href="/en/docs/dotnet-packages/"><span>PACKAGES / .NET</span><h3>.NET packages</h3><p>The responsibilities and principal types of Gua.Core, Gua.Testing, and Gua.Testing.Godot.</p></a>
+  </div>
+  <h2>Guide or docs?</h2><div class="grid-2"><div class="mini-card"><strong>Guide</strong><p>Use it when you want to install, connect, and test Gua in sequence.</p></div><div class="mini-card"><strong>Docs</strong><p>Use it when you need the purpose or ownership of a specific type, variable, or function.</p></div></div>
+</DocPage>

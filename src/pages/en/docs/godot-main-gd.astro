@@ -1,0 +1,34 @@
+---
+import DocPage from '../../../components/DocPage.astro'; import CodeBlock from '../../../components/CodeBlock.astro'; import Callout from '../../../components/Callout.astro';
+---
+<DocPage eyebrow="DOCS / GODOT SAMPLE" title="Godot main.gd" lead="examples/godot-gdscript/scripts/main.gd is a compact reference that combines Control-tree construction, automatic collection, the Inspector bridge, and visual end-to-end fixtures." description="Variables and functions in the Gua Godot GDScript sample." section="docs">
+  <p><a href="https://github.com/link1345/gua/blob/main/examples/godot-gdscript/scripts/main.gd">View the complete source on GitHub ↗</a></p>
+  <h2>Central object</h2><CodeBlock title="Create the adapter" lang="gdscript" code={`const GuaAutoAdapterScript := preload(\n  "res://addons/gua/gua_auto_adapter.gd"\n)\nvar ui := GuaAutoAdapterScript.new()`} /><p><code>ui</code> is the boundary between the Godot Control tree and the Gua runtime. Pass the root to <code>attach</code>, then call <code>update</code> as frames advance.</p>
+  <h2>Top-level variables</h2><div class="table-wrap"><table><thead><tr><th>Name</th><th>Type / default</th><th>Purpose</th></tr></thead><tbody>
+    <tr><td><code>start_inspector_bridge_on_ready</code></td><td>bool / true</td><td>Whether to start the in-game WebSocket bridge from <code>_ready</code>.</td></tr>
+    <tr><td><code>inspector_bridge_port</code></td><td>int / 8765</td><td>The port used by Inspector and MCP. <code>GUA_BRIDGE_PORT</code> can override it.</td></tr>
+    <tr><td><code>ui</code></td><td>GuaAutoAdapter</td><td>Collects Controls, dispatches requests, and publishes snapshots.</td></tr>
+    <tr><td><code>loading</code></td><td>bool / false</td><td>Selects the logical <code>title</code> or <code>loading</code> screen.</td></tr>
+    <tr><td><code>title_label</code></td><td>Label</td><td>The title heading, reflected as a semantic text node.</td></tr>
+    <tr><td><code>start_button</code></td><td>Button</td><td>The primary action; its <code>pressed</code> signal calls <code>_show_loading</code>.</td></tr>
+    <tr><td><code>settings_button</code></td><td>Button</td><td>A second button used to demonstrate collection of multiple actions.</td></tr>
+    <tr><td><code>loading_label</code></td><td>Label</td><td>The loading text revealed after the start action.</td></tr>
+    <tr><td><code>visual_e2e</code></td><td>bool</td><td>Enabled by <code>GUA_VISUAL_E2E=1</code> to add visual-test controls and capture.</td></tr>
+    <tr><td><code>v2_e2e</code></td><td>bool</td><td>Enabled by <code>GUA_V2_E2E=1</code> to add protocol-v2 form fixtures.</td></tr>
+    <tr><td><code>visual_e2e_update_elapsed</code></td><td>float / 0.0</td><td>Throttles visual-E2E updates to roughly 0.1-second intervals.</td></tr>
+  </tbody></table></div>
+  <h2>Lifecycle functions</h2><div class="table-wrap"><table><thead><tr><th>Function</th><th>When</th><th>Gua responsibility</th></tr></thead><tbody>
+    <tr><td><code>_ready()</code></td><td>Scene ready</td><td>Reads environment, builds UI, attaches the adapter, publishes once, and starts the bridge.</td></tr>
+    <tr><td><code>_process(delta)</code></td><td>Every frame</td><td>Calls <code>ui.update(_current_screen())</code> with the latest Control state.</td></tr>
+    <tr><td><code>_current_screen()</code></td><td>Before update</td><td>Maps <code>loading</code> to the logical screen name <code>title</code> or <code>loading</code>.</td></tr>
+  </tbody></table></div>
+  <h2>UI construction and operations</h2><div class="table-wrap"><table><thead><tr><th>Function</th><th>Purpose</th></tr></thead><tbody>
+    <tr><td><code>_build_ui()</code></td><td>Creates the normal Labels and Buttons, including layout and signals.</td></tr>
+    <tr><td><code>_build_visual_e2e_controls()</code></td><td>Adds a sensitive LineEdit, CheckBox, and OptionButton for visual comparison and redaction tests.</td></tr>
+    <tr><td><code>_build_v2_e2e_controls()</code></td><td>Adds TextEdit, selection, tab, and scroll targets for protocol-v2 operations.</td></tr>
+    <tr><td><code>_show_loading()</code></td><td>Updates visibility and enabled state after start, then publishes immediately.</td></tr>
+    <tr><td><code>_capture_visual_e2e()</code></td><td>Waits for rendered frames, then explicitly publishes a viewport PNG.</td></tr>
+    <tr><td><code>_start_inspector_bridge()</code></td><td>Starts the in-game bridge and prints either its URL or an actionable warning.</td></tr>
+  </tbody></table></div>
+  <Callout kind="tip" title="gua_id and gua_sensitive"><p><code>set_meta("gua_id", ...)</code> supplies a stable ID independent of NodePath. <code>set_meta("gua_sensitive", true)</code> prevents values from appearing in snapshots and diagnostics. It does not automatically mask pixels already rendered into a PNG.</p></Callout>
+</DocPage>

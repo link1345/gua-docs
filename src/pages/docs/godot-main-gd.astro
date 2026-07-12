@@ -1,0 +1,34 @@
+---
+import DocPage from '../../components/DocPage.astro'; import CodeBlock from '../../components/CodeBlock.astro'; import Callout from '../../components/Callout.astro';
+---
+<DocPage eyebrow="DOCS / GODOT SAMPLE" title="Godot main.gd" lead="examples/godot-gdscript/scripts/main.gdは、Controlツリーの構築、自動収集アダプター、Inspectorブリッジ、視覚E2E用UIを1ファイルで示すサンプルです。" description="Gua Godot GDScriptサンプルの変数・関数リファレンス。" section="docs">
+  <p><a href="https://github.com/link1345/gua/blob/main/examples/godot-gdscript/scripts/main.gd">GitHubでソース全体を見る ↗</a></p>
+  <h2>中心となるオブジェクト</h2><CodeBlock title="アダプター生成" lang="gdscript" code={`const GuaAutoAdapterScript := preload(\n  "res://addons/gua/gua_auto_adapter.gd"\n)\nvar ui := GuaAutoAdapterScript.new()`} /><p><code>ui</code>がGodotのControlツリーとGuaランタイムの境界です。<code>attach</code>でルートを渡し、<code>update</code>をフレームごとに呼びます。</p>
+  <h2>トップレベル変数</h2><div class="table-wrap"><table><thead><tr><th>名前</th><th>型 / 初期値</th><th>役割</th></tr></thead><tbody>
+    <tr><td><code>start_inspector_bridge_on_ready</code></td><td>bool / true</td><td>Ready時にゲーム内WebSocketブリッジを始めるか。</td></tr>
+    <tr><td><code>inspector_bridge_port</code></td><td>int / 8765</td><td>InspectorとMCPが接続するポート。<code>GUA_BRIDGE_PORT</code>で上書き可能。</td></tr>
+    <tr><td><code>ui</code></td><td>GuaAutoAdapter</td><td>Control収集、要求のディスパッチ、スナップショット公開を担当。</td></tr>
+    <tr><td><code>loading</code></td><td>bool / false</td><td>現在の論理画面がtitleかloadingかを決める。</td></tr>
+    <tr><td><code>title_label</code></td><td>Label</td><td>タイトル画面の見出し。UI Treeではテキストノードになる。</td></tr>
+    <tr><td><code>start_button</code></td><td>Button</td><td>開始操作。<code>pressed</code>を<code>_show_loading</code>へ接続する。</td></tr>
+    <tr><td><code>settings_button</code></td><td>Button</td><td>複数ボタン収集を示す設定ボタン。</td></tr>
+    <tr><td><code>loading_label</code></td><td>Label</td><td>操作後に表示されるLoadingテキスト。</td></tr>
+    <tr><td><code>visual_e2e</code></td><td>bool</td><td><code>GUA_VISUAL_E2E=1</code>で視覚テスト用Controlとキャプチャを有効化。</td></tr>
+    <tr><td><code>v2_e2e</code></td><td>bool</td><td><code>GUA_V2_E2E=1</code>でProtocol v2フォームを追加。</td></tr>
+    <tr><td><code>visual_e2e_update_elapsed</code></td><td>float / 0.0</td><td>視覚E2E中の更新頻度を0.1秒単位に抑える。</td></tr>
+  </tbody></table></div>
+  <h2>ライフサイクル関数</h2><div class="table-wrap"><table><thead><tr><th>関数</th><th>呼ばれる時点</th><th>Gua上の役割</th></tr></thead><tbody>
+    <tr><td><code>_ready()</code></td><td>シーン準備完了</td><td>環境変数読取、UI構築、<code>ui.attach(self)</code>、初回update、ブリッジ開始。</td></tr>
+    <tr><td><code>_process(delta)</code></td><td>毎フレーム</td><td><code>ui.update(_current_screen())</code>で最新Control状態を反映。</td></tr>
+    <tr><td><code>_current_screen()</code></td><td>update直前</td><td><code>loading</code>を論理画面名<code>title</code>/<code>loading</code>へ変換。</td></tr>
+  </tbody></table></div>
+  <h2>UI構築と操作</h2><div class="table-wrap"><table><thead><tr><th>関数</th><th>説明</th></tr></thead><tbody>
+    <tr><td><code>_build_ui()</code></td><td>LabelとButtonを生成し、位置・サイズ・シグナルを設定する通常UI。</td></tr>
+    <tr><td><code>_build_visual_e2e_controls()</code></td><td>機密LineEdit、CheckBox、OptionButtonを追加し、視覚比較とredactionを試す。</td></tr>
+    <tr><td><code>_build_v2_e2e_controls()</code></td><td>TextEdit、選択、タブ、スクロール等のProtocol v2操作対象を追加。</td></tr>
+    <tr><td><code>_show_loading()</code></td><td>開始ボタン後の可視/無効状態を更新し、直ちにGuaへ同期。</td></tr>
+    <tr><td><code>_capture_visual_e2e()</code></td><td>描画フレームを待ってviewport PNGを明示的に公開。</td></tr>
+    <tr><td><code>_start_inspector_bridge()</code></td><td>指定ポートでゲーム内ブリッジを開始し、成功URLまたは警告を出力。</td></tr>
+  </tbody></table></div>
+  <Callout kind="tip" title="gua_idとgua_sensitive"><p><code>set_meta("gua_id", ...)</code>はNodePathに代わる安定ID、<code>set_meta("gua_sensitive", true)</code>は値をスナップショットや診断から隠す指示です。ただしレンダリング済みPNGは自動マスクされません。</p></Callout>
+</DocPage>

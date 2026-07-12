@@ -1,0 +1,30 @@
+---
+import DocPage from '../../../components/DocPage.astro'; import CodeBlock from '../../../components/CodeBlock.astro'; import Callout from '../../../components/Callout.astro';
+---
+<DocPage eyebrow="DOCS / .NET PACKAGES" title=".NET packages" lead="External Godot UI tests use three layers. Gua.Core or Gua.Testing on its own does not launch and drive a live Godot process." description="Reference for Gua.Core, Gua.Testing, and Gua.Testing.Godot." section="docs">
+  <h2>Install</h2><CodeBlock title="Run in the test project" lang="powershell" code={`dotnet add package Gua.Core --version 0.12.0\ndotnet add package Gua.Testing --version 0.12.0\ndotnet add package Gua.Testing.Godot --version 0.12.0`} /><p>Omit the version to select the latest stable NuGet release. Keep all three packages on the same version line.</p>
+  <h2>Gua.Core</h2><p>The lowest .NET layer over the native C ABI. It defines the UI-tree, request, and event contracts.</p><div class="table-wrap"><table><thead><tr><th>Type</th><th>Responsibility</th></tr></thead><tbody>
+    <tr><td><code>IGuaContext</code></td><td>The common operation boundary shared by local and remote contexts.</td></tr>
+    <tr><td><code>GuaContext</code></td><td>Owns a native Gua context and its nodes, snapshots, requests, and events.</td></tr>
+    <tr><td><code>GuaSelector</code></td><td>Represents selection by ID, role, text, state, and scope.</td></tr>
+    <tr><td><code>GuaNodeState</code></td><td>Observed state such as visible, enabled, value, focused, and checked.</td></tr>
+    <tr><td><code>GuaAction</code> / <code>GuaEvent</code></td><td>An external request and the result or event observed by the host.</td></tr>
+    <tr><td><code>GuaReset</code></td><td>The contract for session epochs and clearing requests, events, and retained history.</td></tr>
+  </tbody></table></div>
+  <h2>Gua.Testing</h2><p>Adds the higher-level API consumed by tests.</p><div class="table-wrap"><table><thead><tr><th>Type</th><th>Responsibility</th></tr></thead><tbody>
+    <tr><td><code>GuaAssertions</code></td><td>Entry point for <code>GetById</code>, <code>GetByRole</code>, and <code>WaitFor...</code>.</td></tr>
+    <tr><td><code>GuaLocatorQuery</code></td><td>Builds selectors with ByRole, ByText, Within, WhereVisible, and related filters.</td></tr>
+    <tr><td><code>GuaNodeSnapshot</code></td><td>Evidence for a node at the exact frame and revision where a wait succeeded.</td></tr>
+    <tr><td><code>GuaTestSession</code></td><td>Controls reset and strict leak detection around a test.</td></tr>
+    <tr><td><code>GuaAssertionScope</code></td><td>Applies framework failure handling and diagnostic options within a scope.</td></tr>
+    <tr><td><code>GuaDiagnostics</code></td><td>Writes the UI tree, logs, history, and environment metadata after a failure.</td></tr>
+  </tbody></table></div>
+  <h2>Gua.Testing.Godot</h2><p>Starts a Godot process and connects to its in-game WebSocket bridge.</p><div class="table-wrap"><table><thead><tr><th>Type</th><th>Responsibility</th></tr></thead><tbody>
+    <tr><td><code>GodotSceneTestHost</code></td><td>Owns scene startup, bridge connection, shutdown, process output, and screenshot access.</td></tr>
+    <tr><td><code>GodotSceneTestHostOptions</code></td><td>Configures the executable, project path, headless mode, port, environment, and reset policy.</td></tr>
+    <tr><td><code>GuaRemoteContext</code></td><td>An <code>IGuaContext</code> that polls snapshots and sends actions over WebSocket.</td></tr>
+    <tr><td><code>GuaRemoteUiTree</code></td><td>Converts a remote JSON snapshot into the .NET node model.</td></tr>
+    <tr><td><code>GuaScreenshot</code></td><td>Represents a saved PNG, including its absolute path and dimensions.</td></tr>
+  </tbody></table></div>
+  <Callout kind="tip" title="Dependency direction"><p>The dependency direction is <code>Gua.Testing.Godot → Gua.Testing → Gua.Core → native Gua</code>. Test code normally interacts with the Godot host and assertions, but all packages should remain version-aligned.</p></Callout>
+</DocPage>
