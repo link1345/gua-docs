@@ -80,4 +80,23 @@ using var assertionScope = GuaAssertionScope.Use(
 GuaAssertions.GetByRole(
     host.Context, "button", "Start Game"
 ).ToBeVisible();`} /><p>GitHub Actionsを使う場合は、テスト後に<code>artifacts/gua/**</code>を<code>actions/upload-artifact</code>へ渡すと、失敗した実行から診断ファイルを取得できます。</p>
+  <h2>GitHub Actionsで実行する</h2><p>公開Actionの<a href="https://github.com/link1345/gua-tester"><code>link1345/gua-tester</code></a>を使うと、Windows runnerへのGodot導入、最新の配布済みGuaアドオンの配置、<code>GODOT_EXECUTABLE</code>の設定、<code>dotnet test</code>の実行をまとめて行えます。</p><CodeBlock title=".github/workflows/godot-gdscript.yml" lang="yaml" code={`name: Godot Gua UI tests
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run Gua UI tests
+        uses: link1345/gua-tester@v1.2
+        with:
+          project-path: game
+          test-project: tests/GuaTester.Tests.csproj
+          godot-version: "4.7"
+          godot-status: stable`} /><Callout kind="tip" title="配布済みアドオンを使用"><p>このActionはGua Releasesの最新<code>godot-plugin-*</code>からZIPを取得し、<code>game/addons/gua</code>へ配置します。CI上でGuaのネイティブ拡張をビルドする必要はありません。入力・出力の全一覧は<a href="/docs/github-actions/">GitHub Actionsリファレンス</a>を参照してください。</p></Callout>
 </DocPage>

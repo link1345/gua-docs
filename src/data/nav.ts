@@ -14,6 +14,7 @@ export const docs = [
   { label: 'Docs概要', href: '/docs/' },
   { label: 'Godot main.gd', href: '/docs/godot-main-gd/' },
   { label: '.NETパッケージ', href: '/docs/dotnet-packages/' },
+  { label: 'GitHub Actions', href: '/docs/github-actions/' },
 ] as const;
 
 export const sectionsEn = [
@@ -32,4 +33,5 @@ export const docsEn = [
   { label: 'Docs overview', href: '/en/docs/' },
   { label: 'Godot main.gd', href: '/en/docs/godot-main-gd/' },
   { label: '.NET packages', href: '/en/docs/dotnet-packages/' },
+  { label: 'GitHub Actions', href: '/en/docs/github-actions/' },
 ] as const;
