@@ -1,0 +1,9 @@
+---
+import DocPage from '../../components/DocPage.astro'; import CodeBlock from '../../components/CodeBlock.astro'; import Callout from '../../components/Callout.astro';
+---
+<DocPage eyebrow="IMGUI / TESTING" title="テストの仕方" lead="まずバックエンド不要のsmokeでアダプター境界を確認し、次にC++ロケーターで要求と次フレームの結果を検証する。" description="GuaでDear ImGui UIをテストする方法。" section="imgui">
+  <h2>最短のsmokeテスト</h2><CodeBlock title="PowerShell" lang="powershell" code={`.\\build\\windows-msvc-debug\\examples\\cpp-imgui\\Debug\\gua-cpp-imgui-example.exe --smoke`} /><p>サンプルはUI Treeを出力し、<code>start</code>へクリック要求を入れ、次のフレームでボタンが要求を消費できるか確認する。</p>
+  <h2>テストの基本形</h2><CodeBlock title="imgui_test.cpp" lang="cpp" code={`gua::Context context;\n\ncontext.begin_frame("title");\nImGui::NewFrame();\nGuaImGui::Button(context, "Start Game##start");\nImGui::EndFrame();\ncontext.end_frame();\n\ngua::testing::get_by_role(context, "button", "Start Game")\n    .click();\n\ncontext.begin_frame("title");\nImGui::NewFrame();\nconst bool clicked = GuaImGui::Button(\n    context, "Start Game##start");\nImGui::EndFrame();\ncontext.end_frame();\n\nassert(clicked);`} />
+  <Callout kind="tip" title="フォントアトラスを先に構築"><p>描画バックエンドなしで<code>ImGui::NewFrame()</code>を呼ぶsmokeでは、先に<code>io.Fonts-&gt;GetTexDataAsRGBA32(...)</code>でフォントアトラスを構築する。</p></Callout>
+  <h2>何を検証するか</h2><div class="grid-2"><div class="mini-card"><strong>存在と一意性</strong><p>id、role、textで対象が1つに定まること。</p></div><div class="mini-card"><strong>要求の消費</strong><p>クリック等が次フレームで通常の戻り値として現れること。</p></div><div class="mini-card"><strong>状態遷移</strong><p>titleからloadingなど、操作後の画面とノード状態。</p></div><div class="mini-card"><strong>観測イベント</strong><p>実ユーザー操作と外部要求の双方がイベントに残ること。</p></div></div>
+</DocPage>

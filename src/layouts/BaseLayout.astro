@@ -1,0 +1,47 @@
+---
+import { sections } from '../data/nav';
+import '../styles/global.css';
+
+interface Props { title: string; description: string; section?: string; }
+const { title, description, section } = Astro.props;
+const path = Astro.url.pathname;
+---
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="description" content={description} />
+    <meta name="theme-color" content="#0d1117" />
+    <title>{title} | Gua 日本語ガイド</title>
+  </head>
+  <body>
+    <header class="topbar">
+      <a class="brand" href="/" aria-label="Gua 日本語ガイド ホーム">
+        <span class="brand-mark">G</span><span>Gua <b>日本語ガイド</b></span>
+      </a>
+      <nav class="topnav" aria-label="主要ナビゲーション">
+        <a href="/godot/">Godot</a><a href="/imgui/">ImGui</a><a href="/inspector/">Inspector</a><a href="/mcp/">MCP</a>
+      </nav>
+      <a class="github-link" href="https://github.com/link1345/gua" target="_blank" rel="noreferrer">GitHub ↗</a>
+    </header>
+    <div class="shell">
+      <aside class="sidebar">
+        <a class:list={["side-home", path === '/' && 'active']} href="/">はじめに</a>
+        {sections.map((item) => (
+          <div class="side-group">
+            <a class:list={["side-parent", path.startsWith(item.href) && 'active']} href={item.href}>
+              <i class={`dot ${item.accent}`}></i>{item.label}
+            </a>
+            {item.children.length > 0 && <div class="side-children">
+              {item.children.map((child) => <a class:list={[path === child.href && 'active']} href={child.href}>{child.label}</a>)}
+            </div>}
+          </div>
+        ))}
+        <div class="version-note"><span>対象</span><strong>Gua / main</strong><small>Godot 4.7 · Windows</small></div>
+      </aside>
+      <main class:list={["content", section && `section-${section}`]}><slot /></main>
+    </div>
+    <footer><span>Gua 日本語ガイド</span><span>非公式・コミュニティドキュメント</span><a href="https://github.com/link1345/gua/blob/main/LICENSE">MIT License</a></footer>
+  </body>
+</html>

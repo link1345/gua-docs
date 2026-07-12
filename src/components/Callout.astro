@@ -1,0 +1,5 @@
+---
+interface Props { kind?: 'info' | 'tip' | 'warn'; title: string; }
+const { kind = 'info', title } = Astro.props;
+---
+<aside class={`callout ${kind}`}><strong>{kind === 'tip' ? '✓' : kind === 'warn' ? '!' : 'i'} {title}</strong><div><slot /></div></aside>

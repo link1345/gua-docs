@@ -1,0 +1,33 @@
+---
+import DocPage from '../../components/DocPage.astro'; import CodeBlock from '../../components/CodeBlock.astro'; import Callout from '../../components/Callout.astro';
+const test = `using Gua.Testing;
+using Gua.Testing.Godot;
+
+using var host = GodotSceneTestHost.Load(
+    "res://Main.tscn",
+    new GodotSceneTestHostOptions {
+        ProjectPath = projectPath,
+        UseAvailableBridgePort = true,
+        StartupResetPolicy = GuaResetPolicy.Strict,
+        TeardownResetPolicy = GuaResetPolicy.Strict,
+    });
+
+GuaAssertions.GetByRole(
+    host.Context, "button", "Start Game"
+).ToBeVisible();
+
+await GuaAssertions.GetById(
+    host.Context, "start"
+).ClickAsync();
+
+await GuaAssertions.WaitForTextAsync(
+    host.Context, "loading", "Loading..."
+);`;
+---
+<DocPage eyebrow="GODOT / TESTING" title="テストの仕方" lead="Godotプロセスを起動し、ライブなSemantic UI Treeへ接続する。座標ではなくrole・text・idで操作結果を待つ。" description="Gua.Testing.GodotでGodotシーンをテストする方法。" section="godot">
+  <h2>1. テストプロジェクトを準備</h2><p><code>Gua.Testing.Godot</code>と利用中のテストフレームワーク（NUnitなど）を参照する。GodotがPATHにない場合は環境変数を設定する。</p><CodeBlock title="PowerShell" lang="powershell" code={`$env:GODOT_EXECUTABLE = "C:\\path\\to\\Godot_v4.7-stable_mono_win64_console.exe"\ndotnet test YourGame.Tests.csproj`} />
+  <h2>2. シーンを起動して意味で操作</h2><CodeBlock title="TitleScreenTests.cs" lang="csharp" code={test} />
+  <Callout kind="tip" title="Clickは完了ではない"><p><code>Click()</code>は要求をキューへ積む。アダプターが次のフレームで要求を消費し、通常入力として処理する。結果を確かめるときは<code>WaitFor...</code>を続ける。</p></Callout>
+  <h2>3. フォーム操作</h2><CodeBlock title="非同期アクション" lang="csharp" code={`var name = GuaAssertions.Query(host.Context)\n    .ByRole("textbox").Within("LoginForm").Get();\n\nawait name.SetValueAsync("alice");\nawait name.FocusAsync();\nawait GuaAssertions.PressKeyAsync(host.Context, "Enter");\nawait GuaAssertions.GetById(host.Context, "RememberMe")\n    .SetCheckedAsync(true);\nawait name.WaitForValueAsync("alice");`} />
+  <h2>安定したテストにする3原則</h2><div class="grid-2"><div class="mini-card"><strong>空きポートを使う</strong><p><code>UseAvailableBridgePort = true</code>で並列テストの衝突を避ける。</p></div><div class="mini-card"><strong>厳格にリセット</strong><p>開始・終了時のStrict resetで未消費要求やイベント漏れを検出する。</p></div><div class="mini-card"><strong>待機を使う</strong><p>固定sleepではなく、状態・値・安定スナップショットを待つ。</p></div><div class="mini-card"><strong>失敗を保存する</strong><p>UI Tree、ログ、stdout/stderr、任意のPNGを診断成果物へ残す。</p></div></div>
+</DocPage>

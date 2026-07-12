@@ -1,0 +1,11 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+interface Props { eyebrow: string; title: string; lead: string; description: string; section: string; }
+const props = Astro.props;
+---
+<BaseLayout title={props.title} description={props.description} section={props.section}>
+  <div class="doc-wrap">
+    <header class="doc-hero"><span class="eyebrow">{props.eyebrow}</span><h1>{props.title}</h1><p>{props.lead}</p></header>
+    <article class="doc-body"><slot /></article>
+  </div>
+</BaseLayout>

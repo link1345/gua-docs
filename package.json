@@ -1,0 +1,17 @@
+{
+  "name": "gua-docs-ja",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro check && astro build",
+    "preview": "astro preview",
+    "check": "astro check"
+  },
+  "dependencies": {
+    "@astrojs/check": "latest",
+    "astro": "latest",
+    "typescript": "5.9.3"
+  },
+  "devDependencies": {}
+}
