@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://gua.orizika.com/sitemap-index.xml

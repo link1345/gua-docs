@@ -13,6 +13,31 @@ const japanesePath = isEnglish ? (path.replace(/^\/en/, '') || '/') : path;
 const siteBase = Astro.site ?? new URL('/', Astro.url.origin);
 const preferredUrl = new URL(englishPath.replace(/^\//, ''), siteBase);
 const japaneseUrl = new URL(japanesePath === '/' ? '' : japanesePath.replace(/^\//, ''), siteBase);
+const canonicalUrl = isEnglish ? preferredUrl : japaneseUrl;
+const siteName = isEnglish ? 'Gua Reference' : 'Gua 日本語リファレンス';
+const fullTitle = `${title} | ${siteName}`;
+const ogImageUrl = new URL('og-image.png', siteBase);
+const structuredData = {
+  '@context': 'https://schema.org',
+  '@type': 'TechArticle',
+  headline: title,
+  description,
+  url: canonicalUrl.href,
+  image: ogImageUrl.href,
+  inLanguage: isEnglish ? 'en' : 'ja',
+  isPartOf: {
+    '@type': 'WebSite',
+    name: 'Gua Reference',
+    url: siteBase.href,
+  },
+  about: {
+    '@type': 'SoftwareApplication',
+    name: 'Gua',
+    applicationCategory: 'DeveloperApplication',
+    operatingSystem: 'Windows',
+    url: 'https://github.com/link1345/gua',
+  },
+};
 ---
 <!doctype html>
 <html lang={isEnglish ? 'en' : 'ja'}>
@@ -21,11 +46,32 @@ const japaneseUrl = new URL(japanesePath === '/' ? '' : japanesePath.replace(/^\
     <meta name="viewport" content="width=device-width" />
     <meta name="description" content={description} />
     <meta name="theme-color" content="#0d1117" />
-    <link rel="canonical" href={preferredUrl} />
+    <meta name="robots" content="index, follow, max-image-preview:large" />
+    <link rel="canonical" href={canonicalUrl} />
     <link rel="alternate" hreflang="en" href={preferredUrl} />
     <link rel="alternate" hreflang="ja" href={japaneseUrl} />
     <link rel="alternate" hreflang="x-default" href={preferredUrl} />
-    <title>{title} | {isEnglish ? 'Gua Reference' : 'Gua 日本語リファレンス'}</title>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/site.webmanifest" />
+    <meta property="og:type" content="article" />
+    <meta property="og:site_name" content="Gua Reference" />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonicalUrl} />
+    <meta property="og:image" content={ogImageUrl} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="Gua — Runtime UI Automation for Games" />
+    <meta property="og:locale" content={isEnglish ? 'en_US' : 'ja_JP'} />
+    <meta property="og:locale:alternate" content={isEnglish ? 'ja_JP' : 'en_US'} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={fullTitle} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImageUrl} />
+    <meta name="twitter:image:alt" content="Gua — Runtime UI Automation for Games" />
+    <script type="application/ld+json" set:html={JSON.stringify(structuredData)} is:inline />
+    <title>{fullTitle}</title>
   </head>
   <body>
     <header class="topbar">
