@@ -11,6 +11,10 @@ The site is built and deployed automatically by `.github/workflows/deploy-pages.
 
 The custom domain must be configured in GitHub Settings even though `public/CNAME` is included in the generated artifact. GitHub ignores repository `CNAME` files as a source of custom-domain settings when deployment uses a custom Actions workflow.
 
+This setup must be completed before the first workflow run. If `actions/configure-pages` reports `Get Pages site failed` with `Not Found`, GitHub Pages has not been enabled for the repository yet. Complete steps 1–2 above, then rerun the failed workflow from the **Actions** tab.
+
+Do not add `enablement: true` with the default `GITHUB_TOKEN` as a workaround. Automatic Pages enablement requires a separate token with repository administration and Pages write permissions; the one-time Settings change avoids introducing that additional credential.
+
 ## DNS configuration
 
 Create the following record with the DNS provider for `orizika.com`:
