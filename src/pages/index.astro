@@ -1,12 +1,12 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 ---
-<BaseLayout title="ゲームUIを、意味で操作する" description="GuaのGodot導入、テスト、Inspector、MCP操作を日本語で学ぶ公式リファレンス。">
+<BaseLayout title="ゲームUIを、意味で操作する" description="GuaのGodot・Unity導入、テスト、Inspector、MCP操作を日本語で学ぶ公式リファレンス。">
   <section class="hero-home"><div class="inner">
     <span class="kicker">RUNTIME UI AUTOMATION FOR GAMES</span>
     <h1>ゲームUIを、<em>意味</em>で操作する。</h1>
     <p>Guaは、実行中のゲームUIをSemantic UI Treeとして公開する。座標や画像認識に頼らず、テストとAIから「開始ボタン」をその名前で見つけて操作できる。</p>
-    <div class="hero-actions"><a class="button" href="/godot/">Guideを読む →</a><a class="button secondary" href="/docs/">Docsから調べる</a></div>
+    <div class="hero-actions"><a class="button" href="/unity/">Unity編を読む →</a><a class="button secondary" href="/docs/">Docsから調べる</a></div>
     <figure class="hero-demo">
       <img src="/gua-hero-demo.webp" alt="AIエージェントがGua MCPサーバーを使い、Semantic UI Treeを読み取ってGodotゲームのStart Gameボタンを遠隔操作するデモ" width="1280" height="720" decoding="async" />
       <figcaption><span>DEMO</span> AIエージェントがMCP経由でゲームUIを操作</figcaption>
@@ -16,9 +16,10 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     <span class="kicker">GET THE LATEST</span><h2>まず最新Releaseを取得する</h2>
     <p>GodotアドオンとWindows版Inspectorは<a href="https://github.com/link1345/gua/releases/latest" style="color:var(--mint);text-decoration:underline">GitHub Releases / Latest</a>から取得できます。ソースビルドはGua本体を開発するときの経路です。</p>
     <span class="kicker">HOW IT WORKS</span><h2>ゲームの入力経路を壊さずに観測する</h2>
-    <div class="pipeline"><div><strong>01 / DRAW</strong>Godotが通常どおりUIを描画</div><div><strong>02 / REFLECT</strong>アダプターが意味情報を自動収集</div><div><strong>03 / CONNECT</strong>WebSocketブリッジが外部へ公開</div><div><strong>04 / ACT</strong>テスト・Inspector・MCPが操作</div></div>
+    <div class="pipeline"><div><strong>01 / DRAW</strong>ゲームエンジンが通常どおりUIを描画</div><div><strong>02 / REFLECT</strong>アダプターが意味情報を自動収集</div><div><strong>03 / CONNECT</strong>WebSocketブリッジが外部へ公開</div><div><strong>04 / ACT</strong>テスト・Inspector・MCPが操作</div></div>
     <div class="card-grid">
       <a class="chapter-card" href="/godot/"><span>ENGINE / 01</span><h3>Godot編</h3><p>GDScriptアダプターを取り付け、Controlツリーを自動収集します。実シーンの外部テストにも対応します。</p></a>
+      <a class="chapter-card" href="/unity/"><span>ENGINE / 02</span><h3>Unity編</h3><p>Unity 6のUI Toolkit、uGUI、TextMeshProを自動収集し、Editor/Playerを外部テストします。</p></a>
       <a class="chapter-card" href="/inspector/"><span>TOOL / 03</span><h3>インスペクタ編</h3><p>UI Treeを診断し、Semantic操作、Recording/Replay、PNG差分比較を画面から実行する。</p></a>
       <a class="chapter-card" href="/mcp/"><span>TOOL / 04</span><h3>MCPサーバー操作編</h3><p>AIから全Semantic action、Recording、Replay、Visual比較を操作する。</p></a>
       <a class="chapter-card" href="/docs/"><span>REFERENCE / 05</span><h3>Docs</h3><p>Godot推奨構成、.NET Standard 2.1対応、独立したVisual/Recordingパッケージを調べる。</p></a>

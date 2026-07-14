@@ -2,8 +2,15 @@ export const sections = [
   {
     label: 'Godot編', href: '/godot/', accent: 'mint',
     children: [
-      { label: 'UI実装の仕方', href: '/godot/ui/' },
+      { label: '導入とUI実装', href: '/godot/ui/' },
       { label: 'テストの仕方', href: '/godot/testing/' },
+    ],
+  },
+  {
+    label: 'Unity編', href: '/unity/', accent: 'amber',
+    children: [
+      { label: '導入とUI実装', href: '/unity/ui/' },
+      { label: 'テストの仕方', href: '/unity/testing/' },
     ],
   },
   { label: 'インスペクタ編', href: '/inspector/', accent: 'violet', children: [] },
@@ -12,9 +19,9 @@ export const sections = [
 
 export const docs = [
   { label: 'Docs概要', href: '/docs/' },
-  { label: 'Godot main.gd', href: '/docs/godot-main-gd/' },
   { label: '.NETパッケージ', href: '/docs/dotnet-packages/' },
-  { label: 'Godotアドオンと他エンジン', href: '/docs/runtime-adapters/' },
+  { label: 'Godot API・仕様', href: '/docs/runtime-adapters/' },
+  { label: 'Unity API・仕様', href: '/docs/unity-reference/' },
   { label: 'GitHub Actions', href: '/docs/github-actions/' },
 ] as const;
 
@@ -22,8 +29,15 @@ export const sectionsEn = [
   {
     label: 'Godot', href: '/en/godot/', accent: 'mint',
     children: [
-      { label: 'Implementing UI', href: '/en/godot/ui/' },
+      { label: 'Install and implement UI', href: '/en/godot/ui/' },
       { label: 'Testing UI', href: '/en/godot/testing/' },
+    ],
+  },
+  {
+    label: 'Unity', href: '/en/unity/', accent: 'amber',
+    children: [
+      { label: 'Install and implement UI', href: '/en/unity/ui/' },
+      { label: 'Testing UI', href: '/en/unity/testing/' },
     ],
   },
   { label: 'Inspector', href: '/en/inspector/', accent: 'violet', children: [] },
@@ -32,8 +46,8 @@ export const sectionsEn = [
 
 export const docsEn = [
   { label: 'Docs overview', href: '/en/docs/' },
-  { label: 'Godot main.gd', href: '/en/docs/godot-main-gd/' },
   { label: '.NET packages', href: '/en/docs/dotnet-packages/' },
-  { label: 'Godot addon and other engines', href: '/en/docs/runtime-adapters/' },
+  { label: 'Godot API and specification', href: '/en/docs/runtime-adapters/' },
+  { label: 'Unity API and specification', href: '/en/docs/unity-reference/' },
   { label: 'GitHub Actions', href: '/en/docs/github-actions/' },
 ] as const;
