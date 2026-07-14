@@ -19,9 +19,9 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     <div class="pipeline"><div><strong>01 / DRAW</strong>Godotが通常どおりUIを描画</div><div><strong>02 / REFLECT</strong>アダプターが意味情報を自動収集</div><div><strong>03 / CONNECT</strong>WebSocketブリッジが外部へ公開</div><div><strong>04 / ACT</strong>テスト・Inspector・MCPが操作</div></div>
     <div class="card-grid">
       <a class="chapter-card" href="/godot/"><span>ENGINE / 01</span><h3>Godot編</h3><p>GDScriptアダプターを取り付け、Controlツリーを自動収集します。実シーンの外部テストにも対応します。</p></a>
-      <a class="chapter-card" href="/inspector/"><span>TOOL / 03</span><h3>インスペクタ編</h3><p>UI Tree、ノード状態、ログ、スクリーンショットを可視化して接続を診断する。</p></a>
-      <a class="chapter-card" href="/mcp/"><span>TOOL / 04</span><h3>MCPサーバー操作編</h3><p><code>gui-mcp</code>を通じて、AIエージェントにゲームUIの調査と操作を渡す。</p></a>
-      <a class="chapter-card" href="/docs/"><span>REFERENCE / 05</span><h3>Docs</h3><p>サンプルのクラス・変数・関数、アダプターと.NETパッケージを名前から調べる。</p></a>
+      <a class="chapter-card" href="/inspector/"><span>TOOL / 03</span><h3>インスペクタ編</h3><p>UI Treeを診断し、Semantic操作、Recording/Replay、PNG差分比較を画面から実行する。</p></a>
+      <a class="chapter-card" href="/mcp/"><span>TOOL / 04</span><h3>MCPサーバー操作編</h3><p>AIから全Semantic action、Recording、Replay、Visual比較を操作する。</p></a>
+      <a class="chapter-card" href="/docs/"><span>REFERENCE / 05</span><h3>Docs</h3><p>Godot推奨構成、.NET Standard 2.1対応、独立したVisual/Recordingパッケージを調べる。</p></a>
     </div>
   </section>
 </BaseLayout>

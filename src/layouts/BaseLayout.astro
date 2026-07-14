@@ -106,7 +106,7 @@ const structuredData = {
         <div class="side-children docs-nav">
           {activeDocs.map((item) => <a class:list={[path === item.href && 'active']} href={item.href}>{item.label}</a>)}
         </div>
-        <div class="version-note"><span>{isEnglish ? 'TARGET' : '対象'}</span><strong>Gua / main</strong><small>Godot 4.7 · Windows</small></div>
+        <div class="version-note"><span>{isEnglish ? 'TARGET' : '対象'}</span><strong>Gua / main</strong><small>Godot 4.7 · .NET Standard 2.1 · Windows</small></div>
       </aside>
       <main class:list={["content", section && `section-${section}`]}>
         {!isEnglish && <div class="translation-note">英語版が正式な参照です。内容に差異がある場合は、<a href={englishPath}>英語版</a>を優先してください。</div>}
