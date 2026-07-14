@@ -9,6 +9,8 @@ import Callout from '../../components/Callout.astro';
     <tr><td><code>Gua.Runtime</code></td><td>別のengine adapterを実装するときに使う共有runtime API</td><td>net10.0 / netstandard2.1</td></tr>
     <tr><td><code>Gua.Testing.Unity</code></td><td>外部.NETテストからUnity Editor/Playerをbuild・起動・接続</td><td>net10.0 / netstandard2.1</td></tr>
     <tr><td><code>Gua.Testing</code></td><td>locator、assertion、remote接続、screenshotのengine共通テストAPI</td><td>engine非依存</td></tr>
+    <tr><td><code>Gua.Testing.Visual</code></td><td>Unityを含む任意のGua contextでPNG baseline比較と差分artifactを追加</td><td>net10.0 / netstandard2.1</td></tr>
+    <tr><td><code>Gua.Testing.Recording</code></td><td>Unityを含む任意のGua contextでSemantic操作を記録・Replay</td><td>net10.0 / netstandard2.1</td></tr>
   </tbody></table></div>
   <Callout kind="tip" title="Godot C#アダプターとの共有"><p><code>Gua.Runtime</code>はUnity専用ではなく、Godot C#など別engineのアダプターからも利用できます。GodotのGDScript経路と既存C ABIも引き続き利用できます。</p></Callout>
 

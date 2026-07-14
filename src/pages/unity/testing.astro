@@ -26,6 +26,19 @@ var screenshot = host.CaptureScreenshot();`} />
     <tr><td><code>LoadEditor</code></td><td>指定sceneをEditor Play Modeで起動</td></tr>
     <tr><td><code>BuildAndLoadPlayer</code></td><td>sceneからWindows x64 Mono Playerをビルドして起動</td></tr>
   </tbody></table></div>
+  <h2>Visual比較と操作記録</h2>
+  <p><code>Gua.Testing.Visual</code>と<code>Gua.Testing.Recording</code>はengine共通パッケージなので、<code>Gua.Testing.Unity</code>の<code>host.Context</code>でも利用できます。Visual比較にはPNGを取得できる<code>LoadRenderedPlayer</code>またはEditor Play Modeを使います。Recordingはsemantic actionを扱うためheadless Playerでも利用できます。</p>
+  <CodeBlock title="Unity hostで共通パッケージを使う" lang="csharp" code={`using Gua.Testing.Recording;
+using Gua.Testing.Visual;
+
+var comparison = await GuaVisualAssertions.ExpectScreenshotAsync(
+    host.Context, "title-screen", new() {
+        BaselineDirectory = "baselines",
+        ArtifactDirectory = "artifacts/gua",
+    });
+
+var recorder = new GuaRecorder(host.Context);
+await recorder.ClickAsync(new(Id: "start"));`} />
   <h2>並列実行と分離</h2>
   <p><code>UseAvailableBridgePort</code>は既定で<code>true</code>です。ホストがloopbackの空きポートを予約し、子プロセスへ<code>GUA_BRIDGE_PORT</code>を渡すため、固定8765の衝突を避けられます。</p>
   <p>ただし番号を選んだ直後にlistenerを閉じてからUnityを起動するため、bind完了までを予約する仕組みではありません。極端な並列負荷では小さな競合余地が残ります。</p>
