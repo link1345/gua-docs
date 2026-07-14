@@ -1,0 +1,70 @@
+---
+import DocPage from '../../components/DocPage.astro';
+import Callout from '../../components/Callout.astro';
+import CodeBlock from '../../components/CodeBlock.astro';
+---
+<DocPage eyebrow="DOCS / RUNTIME ADAPTERS" title="Godotアドオンと他エンジン" lead=".NETライブラリ、Godot GDScriptアドオン、ネイティブDLLは同じGua契約を別の位置から使う。どれをゲームへ入れ、どれをテスト側で使うかを分離して理解します。" description="Guaの.NETバインディングとGodot GDScriptアドオンの違い、gua_godot DLLの役割、Unityなどへの移植方針を解説します。" section="docs">
+  <Callout title="調査基準"><p><a href="https://github.com/link1345/gua/tree/e82c7da92790b30bb8d534e5061fd3b2ebe00730">link1345/gua main（e82c7da、2026-07-14確認）</a>の実装を基準にしています。将来のリリースで対象OS、DLL名、Target Frameworkが増える可能性があります。</p></Callout>
+
+  <h2>最初に結論</h2>
+  <div class="table-wrap"><table><thead><tr><th>置き場所</th><th>利用場面</th><th>役割</th><th>ゲームエンジン依存</th></tr></thead><tbody>
+    <tr><td><a href="https://github.com/link1345/gua/tree/main/bindings/dotnet/src"><code>bindings/dotnet/src</code></a></td><td>.NETアプリ、外部テストランナー</td><td>C ABIのP/Invoke、ロケーター、待機、アサーション、Godotプロセスホスト、Visual比較</td><td>大部分はエンジン非依存。<code>Gua.Testing.Godot</code>だけGodot固有</td></tr>
+    <tr><td><a href="https://github.com/link1345/gua/tree/main/examples/godot-gdscript/addons/gua"><code>examples/godot-gdscript/addons/gua</code></a></td><td>GDScript製Godotゲームの実行プロセス内</td><td>GodotのControlツリーをSemantic UI Treeへ反映し、外部要求を実UIへ戻す</td><td>Godot 4.7とGDScript/GDExtensionに固有</td></tr>
+  </tbody></table></div>
+  <p>前者は主に「Guaを.NETから操作・検証するためのライブラリ群」、後者は「実行中のGodot UIをGuaへ接続するゲーム側アダプター」です。ディレクトリを丸ごと入れ替えて使う関係ではありません。Godot GDScript統合ではゲーム側にアドオン、テスト側に必要に応じて<code>Gua.Testing</code>と<code>Gua.Testing.Godot</code>を置き、WebSocketで接続します。</p>
+
+  <h2><code>bindings/dotnet/src</code>の意味</h2>
+  <div class="table-wrap"><table><thead><tr><th>プロジェクト</th><th>担当</th><th>エンジン内に必須か</th></tr></thead><tbody>
+    <tr><td><a href="https://github.com/link1345/gua/tree/main/bindings/dotnet/src/Gua.Core"><code>Gua.Core</code></a></td><td><code>gua.dll</code>のC ABIを.NET型で扱う<code>GuaContext</code>と<code>IGuaContext</code>。Windows x64ネイティブDLLをNuGetへ同梱</td><td>.NETからローカルContextを直接所有する場合に使用。UI自動収集機能は含まない</td></tr>
+    <tr><td><a href="https://github.com/link1345/gua/tree/main/bindings/dotnet/src/Gua.Testing"><code>Gua.Testing</code></a></td><td>ロケーター、待機、アサーション、診断、テストセッション</td><td>通常は外部テストプロジェクトで使用</td></tr>
+    <tr><td><a href="https://github.com/link1345/gua/tree/main/bindings/dotnet/src/Gua.Testing.Godot"><code>Gua.Testing.Godot</code></a></td><td>Godotプロセスの起動・終了、WebSocket接続、スクリーンショットと標準出力の収集</td><td>Godot向け外部テストにのみ使用</td></tr>
+    <tr><td><a href="https://github.com/link1345/gua/tree/main/bindings/dotnet/src/Gua.Testing.Visual"><code>Gua.Testing.Visual</code></a></td><td>スクリーンショット比較、操作の記録・再生</td><td>外部テスト側。特定エンジンのUI収集は行わない</td></tr>
+  </tbody></table></div>
+  <Callout kind="warn" title="C#製ゲームならそのまま自動対応、ではない"><p><code>Gua.Core</code>はC#バインディングですが、UnityやGodotのUI型を知りません。各エンジンのUI階層を走査し、Guaノードへ変換し、要求された操作を本来のUIイベントへ戻すランタイムアダプターが別途必要です。</p></Callout>
+
+  <h2>Godot GDScriptアドオンの中身</h2>
+  <div class="table-wrap"><table><thead><tr><th>ファイル</th><th>役割</th></tr></thead><tbody>
+    <tr><td><a href="https://github.com/link1345/gua/blob/main/examples/godot-gdscript/addons/gua/gua.gdextension"><code>gua.gdextension</code></a></td><td>Godotへエントリーポイントとプラットフォーム別ライブラリを宣言する。現状はGodot 4.7、Windows debug x86_64のみ</td></tr>
+    <tr><td><a href="https://github.com/link1345/gua/blob/main/examples/godot-gdscript/addons/gua/gua_auto_adapter.gd"><code>gua_auto_adapter.gd</code></a></td><td>ルート<code>Control</code>以下を毎更新時に収集し、状態反映、クリック等の要求配送、イベント、スクリーンショットを担当</td></tr>
+    <tr><td><code>bin/gua_godot.windows.debug.x86_64.dll</code></td><td>GDScriptから使えるネイティブ<code>GuaContext</code>クラスをGodotへ登録するGDExtension</td></tr>
+    <tr><td><code>bin/gua_runtime.dll</code></td><td>Gua core、要求・イベントキュー、診断、Inspector用WebSocket bridgeを所有する共有ランタイム</td></tr>
+    <tr><td><code>plugin.cfg</code> / <code>plugin.gd</code></td><td>Godotアドオンとしてのパッケージ形を与えるEditorPluginの薄いシェル</td></tr>
+  </tbody></table></div>
+  <div class="flow"><span>Godot Control tree</span><b>→</b><span>gua_auto_adapter.gd</span><b>→</b><span>GuaContext (GDExtension)</span><b>→</b><span>gua_runtime.dll</span><b>→</b><span>Inspector / MCP / Tests</span></div>
+
+  <h2><code>gua_godot.windows.debug.x86_64.dll</code>は何をしているか</h2>
+  <p>このDLLは<a href="https://github.com/link1345/gua/tree/main/native/gua-godot"><code>native/gua-godot</code></a>からビルドされるC++ GDExtensionです。<a href="https://github.com/link1345/gua/blob/main/native/gua-godot/src/register_types.cpp"><code>gua_godot_library_init</code></a>を入口に、GodotのScene初期化段階で<code>GuaContext</code>を<code>ClassDB</code>へ登録します。<a href="https://github.com/link1345/gua/blob/main/native/gua-godot/src/gua_context.cpp"><code>GuaContext::_bind_methods()</code></a>はframe開始・終了、ノード登録、action要求、event結果、reset、スクリーンショット、Inspector bridgeなどをGDScriptから呼べるメソッドへ変換します。</p>
+  <p>必要な理由は、GDScriptだけではGuaのC ABIとC++ランタイムを直接Godotクラスとして扱えないためです。<code>gua_auto_adapter.gd</code>は<code>gua.gdextension</code>をロードし、<code>ClassDB.instantiate("GuaContext")</code>でこのDLLが登録したクラスを生成します。DLLが無い、古い、CPU/構成が違う場合は<code>GuaContext</code>を生成できず、アダプターは動きません。</p>
+  <Callout kind="tip" title="DLLごとの責務"><p><code>gua_godot...</code>はGodot型とGDScriptへの変換層、<code>gua_runtime.dll</code>は共有ランタイム層です。前者は後者へリンクしているため、Windows版では通常、両方を<code>addons/gua/bin</code>へ配置します。</p></Callout>
+  <p><a href="https://github.com/link1345/gua/blob/main/examples/godot-gdscript/addons/gua/gua.gdextension"><code>gua.gdextension</code></a>がこのDLLを<code>res://addons/gua/bin/...</code>からロードします。ビルド先も<a href="https://github.com/link1345/gua/blob/main/native/gua-godot/CMakeLists.txt"><code>native/gua-godot/CMakeLists.txt</code></a>で同じ場所に固定され、リリースワークフローはアドオンの全DLLをZIPへ収録します。</p>
+  <CodeBlock title="Windows debug GDExtensionのビルド" lang="powershell" code={`cmake --preset windows-msvc-debug\ncmake --build --preset windows-msvc-debug --target gua-godot`} />
+  <Callout kind="warn" title="C# Godot経路では使わない"><p><a href="https://github.com/link1345/gua/tree/main/examples/dotnet-godot"><code>examples/dotnet-godot</code></a>は<code>GuaGodotRuntime.cs</code>から<code>gua_runtime.dll</code>を直接P/Invokeします。したがって<code>gua_godot.windows.debug.x86_64.dll</code>はGDScript経路に必要であり、すべてのGodot統合に共通の必須DLLではありません。</p></Callout>
+
+  <h2>Unityなど他のC#系エンジンへ適用する場合</h2>
+  <h3>そのまま流用できるもの</h3>
+  <ul>
+    <li><a href="https://github.com/link1345/gua/tree/main/protocol">プロトコル仕様とJSON Schema</a>、Semantic UI Tree、action/request/eventの契約。</li>
+    <li><a href="https://github.com/link1345/gua/tree/main/native/gua-core"><code>native/gua-core</code></a>のC ABI。対象プラットフォーム用ネイティブプラグインとしてビルドする。</li>
+    <li><a href="https://github.com/link1345/gua/tree/main/native/gua-runtime"><code>native/gua-runtime</code></a>のランタイムbridge設計。現行WebSocket bridgeはWin32中心なので、Windows x64以外は追加移植が必要。</li>
+    <li><code>Gua.Testing</code>のロケーター・待機・アサーション。ゲーム外の.NET 10テストランナーで、Unity側bridgeへ接続する構成なら再利用しやすい。</li>
+    <li><code>gua_auto_adapter.gd</code>と<code>GuaGodotRuntime.cs</code>の「毎frame UIを収集し、外部要求を実UIイベントへ戻す」アルゴリズム。</li>
+  </ul>
+  <h3>そのまま流用できないもの</h3>
+  <ul>
+    <li><code>gua_godot.windows.debug.x86_64.dll</code>、<code>gua.gdextension</code>、GDScript、Godotの<code>Control</code>/<code>ClassDB</code>/<code>Viewport</code>処理。</li>
+    <li><code>GuaGodotRuntime.cs</code>のGodot型走査とシグナル処理、<code>GodotSceneTestHost</code>のプロセス引数・シーン起動処理。</li>
+    <li>現行<code>Gua.Core</code>/<code>Gua.Testing</code>のDLLをUnityへ直接読み込むこと。Guaは<code>net10.0</code>を対象としますが、Unity 6の<a href="https://docs.unity3d.com/ja/current/Manual/dotnet-profile-support.html">.NETプロファイル互換表</a>では.NET Core向けマネージプラグインは非対応です。</li>
+    <li>Windows debug x86_64 DLLをmacOS、Linux、モバイル、Web、Release、IL2CPPへそのまま配布すること。各ターゲット向けビルドと<a href="https://docs.unity3d.com/ja/current/Manual/plug-ins.html">Unity Plugin Import設定</a>が必要です。</li>
+  </ul>
+
+  <h3>推奨するUnityアダプター構成</h3>
+  <div class="flow"><span>UI Toolkit / uGUI</span><b>→</b><span>UnityGuaAdapter.cs</span><b>→</b><span>native Gua plugin</span><b>→</b><span>WebSocket</span><b>→</b><span>.NET 10 test runner</span></div>
+  <ol class="steps">
+    <li><strong>最初はWindows x64と一つのUI方式に絞る。</strong><br />UI Toolkitなら<code>UIDocument.rootVisualElement</code>以下のVisual Tree、uGUIならCanvas以下の<code>Selectable</code>を対象にします。UI Toolkitの<a href="https://docs.unity3d.com/ja/current/Manual/UIE-UQuery.html">UQuery</a>は名前・USSクラス・型で要素を検索できます。</li>
+    <li><strong>Unity互換C#ソースでネイティブ境界を書く。</strong><br /><code>net10.0</code>の既存DLLを参照せず、Unityが対応するAPIプロファイルでC ABIのP/Invokeと薄いContextラッパーを用意します。</li>
+    <li><strong>ゲーム側アダプターを実装する。</strong><br /><code>MonoBehaviour.Update</code>等でframeを開始し、UI階層からid、role、text、bounds、visible、enabled、valueを登録して終了します。要求はButton、Toggle、入力欄、選択、scroll等の本来のイベント経路へ適用し、結果eventを返します。</li>
+    <li><strong>bridgeとスクリーンショットをUnityへ合わせる。</strong><br />共有runtimeのbridgeを開始し、スクリーンショット要求はUnityの描画完了後に取得します。Godotの<code>Viewport</code>コードは使いません。</li>
+    <li><strong>外部ホストを分離する。</strong><br /><code>GodotSceneTestHost</code>をコピーするのではなく、Unity Playerの起動・終了、port、ログ、成果物を扱う<code>UnityPlayerTestHost</code>相当を作ります。Unity内のPlay Modeテストには<a href="https://docs.unity3d.com/ja/current/Manual/com.unity.test-framework.html">Unity Test Framework</a>も併用できます。</li>
+  </ol>
+  <Callout kind="tip" title="最初に参考にする順番"><p><a href="https://github.com/link1345/gua/blob/main/protocol/specs/protocol.md">protocol.md</a> → <a href="https://github.com/link1345/gua/blob/main/native/gua-runtime/include/gua/runtime.h">runtime.h</a> → <a href="https://github.com/link1345/gua/blob/main/examples/godot-gdscript/addons/gua/gua_auto_adapter.gd">gua_auto_adapter.gd</a> → <a href="https://github.com/link1345/gua/blob/main/examples/dotnet-godot/addons/gua/GuaGodotRuntime.cs">GuaGodotRuntime.cs</a> → <a href="https://github.com/link1345/gua/blob/main/bindings/dotnet/src/Gua.Testing.Godot/GuaRemoteContext.cs">GuaRemoteContext.cs</a>の順で読むと、契約、ネイティブ境界、UI反映、C#実装、外部接続を混同しにくくなります。</p></Callout>
+</DocPage>

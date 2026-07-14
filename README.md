@@ -36,5 +36,6 @@ bun run build
 - Docs / Reference
   - Godotサンプル `main.gd`
   - .NETパッケージ
+  - Godotアドオン、GDExtension DLL、他エンジンへの移植
 
 内容は Gua の `main` ブランチにある実装・サンプル・README をもとにしています。
